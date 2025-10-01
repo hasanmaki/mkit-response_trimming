@@ -21,21 +21,3 @@ class BaseApiSettings(BaseModel):
         if not all([parsed.scheme, parsed.netloc]):
             raise ValueError("Invalid URL format")
         return v
-
-
-# Digipos Specific Settings
-class DigiposCredential(BaseApiSettings):
-    username: str
-    password: str
-    pin: str
-
-
-# Isimple Spesific Settings
-class IsimpleCredential(BaseApiSettings):
-    msisdn: str
-    pin: str
-
-
-class ClientsSettings(BaseModel):
-    digipos: DigiposCredential
-    isimple: IsimpleCredential
