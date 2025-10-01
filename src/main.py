@@ -2,24 +2,29 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
+from httpx import AsyncClient, Limits
 from loguru import logger
 
+from src.config import AppSettings, get_settings
 from src.config.cfg_logging import setup_logging
-from src.config.settings import AppSettings, get_settings
 
 setup_logging()
-settings: AppSettings = get_settings(toml_file_path="config.toml")
-# digipos_client = DigiposClient(settings)
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    logger.info("Starting application...")
-    # app.state.client_digipos = digipos_client
-
-    # logger.bind(digipos_client=digipos_client).info("Digipos client initialized")
+    settings: AppSettings = get_settings(toml_file_path="config.toml")
+    logger.bind(settings=settings.model_dump()).info(
+        " loaded settings from config.toml"
+    )
+    app.state.http_client = AsyncClient(
+        headers=settings.clients.headers,
+        limits=Limits(max_connections=settings.clients.max_connections),
+        timeout=settings.clients.timeout,
+        http2=settings.clients.http2,
+    )
     yield
-    # await digipos_client.close()
+    await app.state.http_client.aclose()
     logger.info("Stopping application...")
 
 

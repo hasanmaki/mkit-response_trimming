@@ -1,5 +1,6 @@
 from pydantic import BaseModel
-from src.config.cfg_api_base import BaseApiSettings
+
+from config.cfg_shared import BaseApiSettings
 
 
 # Digipos Specific Settings
@@ -10,4 +11,4 @@ class DigiposAccounts(BaseApiSettings):
 
 
 class DigiposConfig(BaseModel):
-    api: list[DigiposAccounts]
+    api: DigiposAccounts

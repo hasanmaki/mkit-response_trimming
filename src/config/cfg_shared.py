@@ -12,7 +12,6 @@ default_headers = {
 class BaseApiSettings(BaseModel):
     base_url: str
     timeout: int = 10
-    headers: dict[str, str] | None = Field(default_headers)
 
     @field_validator("base_url")
     @classmethod
@@ -21,3 +20,13 @@ class BaseApiSettings(BaseModel):
         if not all([parsed.scheme, parsed.netloc]):
             raise ValueError("Invalid URL format")
         return v
+
+
+class ClientsSettings(BaseModel):
+    max_connections: int = Field(10, ge=1, le=100)
+    max_keepalive: int = Field(5, ge=0)
+    timeout: int = Field(5, ge=0)
+    http2: bool = Field(True)
+    headers: dict[str, str] | None = Field(
+        default_factory=lambda: default_headers.copy()
+    )
