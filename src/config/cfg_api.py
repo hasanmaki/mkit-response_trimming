@@ -11,9 +11,7 @@ default_headers = {
 
 class BaseApiSettings(BaseModel):
     base_url: str
-    retries: int = 3
     timeout: int = 10
-    wait: int = 10
     headers: dict[str, str] | None = Field(default_headers)
 
     @field_validator("base_url")
