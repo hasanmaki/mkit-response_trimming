@@ -1,0 +1,215 @@
+[project]
+name = "mkit-response_trimming"
+version = "0.1.0"
+description = "parser untuk response dari otoplus api ke text dengan trim dan parse agar lebih friendly ke otomax inbox"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.117.1",
+    "httpx-retries>=0.4.2",
+    "httpx[http2]>=0.28.1",
+    "loguru-config>=0.1.0",
+    "pydantic-settings>=2.11.0",
+]
+
+authors = [
+    {name = "Hasan Maki", email = "hasan.maki@example.com"}
+]
+
+[tool.uv]
+package = true
+
+[dependency-groups]
+dev = [
+    "pre-commit>=4.2.0",
+    "pytest>=8.4.0",
+    "pytest-cov>=6.2.1",
+    "pytest-html>=4.1.1",
+    "pytest-mock>=3.14.1",
+    "pytest-asyncio>=1.1.0",
+]
+
+[tool.ruff]
+builtins = ["_"]
+fix = true
+show-fixes = true
+src = ["src", "tests"]
+target-version = "py312"
+line-length = 88
+lint.fixable = ["ALL"]
+lint.unfixable = []
+lint.select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "D",   # pydocstyle (docstrings)
+    "ANN", # flake8-annotations (type hints)
+    "UP",  # pyupgrade (modern Python syntax)
+    "B",   # flake8-bugbear (common bugs)
+    "SIM", # flake8-simplify (simplify code)
+    "C90", # flake8-comprehensions (comprehension optimizations)
+    "T20", # flake8-type-checking (type checking)
+    "TRY", # flake8-try-except (try-except optimizations)
+    "RUF",  # ruff (general code quality)
+    "PERF", # ruff performance checks
+    "ARG",  # ruff argument checks
+    "PLC",  # ruff plugin checks
+    "N",   # ruff naming conventions
+]
+lint.ignore = [
+    "E501",    # panjang baris
+    "D100",    # docstring modul
+    "D104",    # docstring package
+    "D107",    # docstring __init__
+    "D101",    # docstring class
+    "D102",    # docstring method
+    "D105",    # docstring magic method
+    "ANN201",  # `cls`
+    "ANN202",  # `self`
+    "ANN401",  # Any
+    "ANN204",  # __init__ return
+    "ANN002",  # *args
+    "ANN003",  # **kwargs
+    "B008", # unused variable
+    "TRY003",  # try-except optimizations
+]
+
+[tool.ruff.lint.pydocstyle]
+convention = "google"
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["D", "ANN"]
+"scripts/*" = ["D100"]
+"__init__.py" = ["ALL"]
+"_version.py" = ["D", "ANN", "E", "W", "F", "I", "UP", "B"]
+"alembic/*.py" = ["ALL"]
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+docstring-code-format = true
+docstring-code-line-length = 60
+skip-magic-trailing-comma = false
+
+
+[tool.pyright]
+include = ["src"]
+ignore = ["**/typings"]
+exclude = [
+    ".*",
+    "__*",
+    "**/typings",
+    "**/migrations",
+    "**/tests",
+    "**/venv",
+    "**/.venv",
+    "**/.env",
+    "**/.vscode",
+    "**/node_modules",
+    "**/__pycache__",
+    "**/*.egg-info",
+    "**/dist",
+    "**/*.pyi",
+    "${python.envPath}/Lib/",
+    "workspaceFolder/Lib/",
+    "**/Lib/",
+    "**/lib/",
+    "**/alembic/*",
+    ]
+
+typeCheckingMode = "standard"
+stubPath = "typings"
+typeshedPath = "typings"
+pythonPlatform = "Windows"
+pythonVersion = "3.12"
+reportMissingImports = "error"
+reportMissingModuleSource = "none"
+reportUnnecessaryTypeIgnoreComment = "information"
+
+[tool.coverage.run]
+source = ["src"]
+data_file = ".reports/coverage/.coverage"
+omit = [
+    "*/tests/*",
+    "*/_version.py",
+    "*/scripts/*",
+    "*/__init__.py",
+    "*/site-packages/*",
+    "*/.venv/*",
+    "*/shibokensupport/*",
+    "*/pyscript/*",
+    "*/signature_bootstrap.py",
+    "src/__init__.py",
+    "src/_version.py",
+]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "if __name__ == .__main__.:",
+    "raise NotImplementedError",
+    "if TYPE_CHECKING:",
+]
+show_missing = true
+skip_covered = false
+skip_empty = true
+
+[tool.coverage.html]
+directory = ".reports/coverage/html"
+skip_covered = false
+skip_empty = true
+
+[tool.pytest.ini_options]
+generate_report_on_test = true
+testpaths = ["tests"]
+python_files = ["test_*.py", "*_test.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+pythonpath = ["src"]
+addopts = [
+    "-v",
+    "--strict-markers",
+    "--tb=short",
+    "--no-header",
+    "--disable-warnings",
+    "--cov=src",
+    "--cov-report=html:.reports/coverage",
+    "--cov-report=term-missing:skip-covered",
+    "--html=.reports/tests/report.html",
+    "--self-contained-html",
+]
+asyncio_mode = "auto"
+
+log_cli = true
+log_cli_level = "DEBUG"
+log_cli_format = "%(asctime)s [%(levelname)8s] %(name)s: %(message)s"
+markers = [
+    "slow: mark test as slow to run",
+    "integration: mark test as integration test",
+    "unit: mark test as unit test",
+    "performance: mark test as performance test",
+    "regression: mark test as regression test",
+    "smoke: mark test as smoke test",
+    "ui: mark test as UI test",
+    "api: mark test as API test",
+    "database: mark test as database-related",
+    "e2e: mark end to end testing",
+]
+filterwarnings = [
+    "ignore::DeprecationWarning",
+    "ignore::PendingDeprecationWarning"
+]
+minversion = "8.0"
+norecursedirs = [
+    ".*",
+    "build",
+    "dist",
+    "*.egg",
+    ".git",
+    ".venv",
+    "venv",
+    "__pycache__",
+    ".pytest_cache",
+    ".reports",
+]

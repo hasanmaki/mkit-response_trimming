@@ -1,0 +1,28 @@
+# configura loguru logger here
+handlers:
+  - sink: ext://sys.stdout
+    format: "<level>{level:}</>:<magenta>{name: >13}.{function:}</><le>[{line:}]</>-> <cyan><b>{message}</></><y>[{extra}]</>"
+    enqueue: true
+    diagnose: true
+    backtrace: true
+  - sink: ./logs/file.log
+    format: "{time:YYYY-MM-DD HH:mm:ss}<level>{level:}</>.{name:}.{function:}.{line:}.{message}"
+    level: INFO
+    colorize: false
+    serialize: true
+  - sink: ./logs/error.log
+    format: "{time:YYYY-MM-DD HH:mm:ss}<level>{level:}</>.{name:}.{function:}.{line:}.{message}"
+    level: ERROR
+    colorize: false
+    serialize: true
+levels:
+  - name: MATRIX
+    "no": 13
+    icon: ¤
+    color: cyan
+extra:
+# register here for extra fields that consistantly appear in logs
+activation:
+  # set to false to disable logging for specific modules
+  - ["my_module.secret", false]
+  - ["another_library.module", true]
