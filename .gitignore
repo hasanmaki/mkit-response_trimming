@@ -209,3 +209,4 @@ __marimo__/
 .vscode/
 *instructions.md
 .reports/
+config.toml
