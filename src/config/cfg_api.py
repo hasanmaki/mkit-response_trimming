@@ -1,6 +1,12 @@
 from urllib.parse import urlparse
 
-from pydantic import BaseModel, field_validator
+from pydantic import BaseModel, Field, field_validator
+
+default_headers = {
+    "User-Agent": "MyApp/1.0",
+    "Accept": "application/json",
+    "Content-Type": "application/json",
+}
 
 
 class BaseApiSettings(BaseModel):
@@ -8,6 +14,7 @@ class BaseApiSettings(BaseModel):
     retries: int = 3
     timeout: int = 10
     wait: int = 10
+    headers: dict[str, str] | None = Field(default_headers)
 
     @field_validator("base_url")
     @classmethod
@@ -25,17 +32,12 @@ class DigiposCredential(BaseApiSettings):
     pin: str
 
 
-class DigiposSettings(BaseModel):
-    # Nama model harus sama dengan sub header semisal [digipos.---] / [isimple.---]
-    api: DigiposCredential
-
-
 # Isimple Spesific Settings
 class IsimpleCredential(BaseApiSettings):
     msisdn: str
     pin: str
 
 
-class IsimpleSettings(BaseModel):
-    # Nama model harus sama dengan sub header semisal [digipos.---] / [isimple.---]
-    api: IsimpleCredential
+class ClientsSettings(BaseModel):
+    digipos: DigiposCredential
+    isimple: IsimpleCredential

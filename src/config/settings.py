@@ -6,7 +6,7 @@ settings ini akan di store pada app state.settings untuk di akses pada seluruh b
 # ruff: noqa
 from functools import lru_cache
 from pydantic_settings import BaseSettings, SettingsConfigDict, TomlConfigSettingsSource
-from src.config.cfg_api import DigiposSettings, IsimpleSettings
+from src.config.cfg_api import ClientsSettings
 
 
 class AppSettings(BaseSettings):
@@ -14,8 +14,7 @@ class AppSettings(BaseSettings):
     contoh: [digipos.api] -> class Digipos: ApiSettings
     """
 
-    digipos: DigiposSettings
-    isimple: IsimpleSettings
+    clients: ClientsSettings
 
     model_config = SettingsConfigDict(
         toml_file="",  # akan di set saat applikasi start
