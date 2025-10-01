@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient, Limits
 from loguru import logger
 
+from src.api import register_routes
 from src.config import AppSettings, get_settings
 from src.config.cfg_logging import setup_logging
 
@@ -14,9 +15,7 @@ setup_logging()
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     settings: AppSettings = get_settings(toml_file_path="config.toml")
-    logger.bind(settings=settings.model_dump()).info(
-        " loaded settings from config.toml"
-    )
+    app.state.settings = settings
     app.state.http_client = AsyncClient(
         headers=settings.clients.headers,
         limits=Limits(max_connections=settings.clients.max_connections),
@@ -35,6 +34,8 @@ app = FastAPI(lifespan=lifespan)
 async def root():
     return {"message": "Hello World"}
 
+
+register_routes(app)
 
 if __name__ == "__main__":
     uvicorn.run(app="src.main:app", host="0.0.0.0", port=8000, reload=True)

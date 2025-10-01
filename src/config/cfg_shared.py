@@ -3,7 +3,7 @@ from urllib.parse import urlparse
 from pydantic import BaseModel, Field, field_validator
 
 default_headers = {
-    "User-Agent": "MyApp/1.0",
+    "User-Agent": "MKIT-Trimmer-API/1.0",
     "Accept": "application/json",
     "Content-Type": "application/json",
 }
