@@ -5,9 +5,9 @@ from typing import Annotated
 from fastapi import Depends, Request
 from httpx import AsyncClient
 
-from src.config.cfg_api_digipos import DigiposConfig
+from domain.digipos.rep_account import DigiposRepos
+from domain.digipos.sch_config import DigiposConfig
 from src.config.settings import AppSettings
-from src.repos.rep_digipos import DigiposRepository
 
 
 def get_app_settings(request: Request) -> AppSettings:
@@ -35,13 +35,13 @@ def get_digipos_config(request: Request) -> DigiposConfig:
 DigiposConfigDep = Annotated[DigiposConfig, Depends(get_digipos_config)]
 
 
-# digipos repo
+# digipos services
 def get_digipos_repository(
     client: Annotated[AsyncClient, Depends(get_http_client)],
     config: Annotated[DigiposConfig, Depends(get_digipos_config)],
-) -> DigiposRepository:
-    """Inisialisasi DigiposRepository (layer: repository) dengan dependency explicit."""
-    return DigiposRepository(client, config)
+) -> DigiposRepos:
+    """Factory function untuk membuat instance DigiposAccountServices."""
+    return DigiposRepos(client, config)
 
 
-DigiposRepoDep = Annotated[DigiposRepository, Depends(get_digipos_repository)]
+DigiposRepoDep = Annotated[DigiposRepos, Depends(get_digipos_repository)]

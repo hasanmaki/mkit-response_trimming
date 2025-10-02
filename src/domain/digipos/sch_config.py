@@ -12,7 +12,7 @@ class DigiposAccounts(BaseApiSettings):
 
 
 class DigiposEndpoints(BaseModel):
-    login: str = Field("/login", description="Endpoint for login")
+    login: str = Field("/add_account", description="Endpoint for login")
     logout: str = Field("/logout", description="Endpoint for logout")
     balance: str = Field("/balance", description="Endpoint for balance")
     profile: str = Field("/profile", description="Endpoint for profile")

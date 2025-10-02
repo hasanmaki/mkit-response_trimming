@@ -18,9 +18,8 @@ async def get_profile_digipos(repo: DigiposRepoDep):
 @router.get("/balance")
 async def get_balance_digipos(repo: DigiposRepoDep):
     """Endpoint untuk mendapatkan saldo pengguna dari Digipos API."""
-    username = repo.config.api.username
-    response = await repo.get_balance(username)
-    return response.json()
+    response = await repo.get_balance()
+    return response
 
 
 @router.get("/logout")

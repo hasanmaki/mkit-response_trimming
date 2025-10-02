@@ -7,7 +7,7 @@ settings ini akan di store pada app state.settings untuk di akses pada seluruh b
 from functools import lru_cache
 
 from config.cfg_shared import ClientsSettings
-from src.config.cfg_api_digipos import DigiposConfig
+from src.domain.digipos.sch_config import DigiposConfig
 from pydantic_settings import BaseSettings, SettingsConfigDict, TomlConfigSettingsSource
 
 
