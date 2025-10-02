@@ -19,4 +19,4 @@ class DigiposRepository:
             params={"username": username},
             timeout=self.config.api.timeout,
         )
-        return response.json()
+        return response
