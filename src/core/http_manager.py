@@ -1,6 +1,8 @@
 import httpx
 from loguru import logger
 
+from src.config import AppSettings
+
 
 class HttpResponseError(Exception):
     """Custom exception untuk error response dari HTTP request."""
@@ -18,6 +20,15 @@ class HTTPConnectionError(Exception):
         super().__init__(message)
         self.context = context or {}
         self.cause = cause
+
+
+def build_http_client(settings: AppSettings) -> httpx.AsyncClient:
+    return httpx.AsyncClient(
+        headers=settings.clients.headers,
+        limits=httpx.Limits(max_connections=settings.clients.max_connections),
+        timeout=settings.clients.timeout,
+        http2=settings.clients.http2,
+    )
 
 
 async def cst_get(client: httpx.AsyncClient, url: str, **kwargs) -> httpx.Response:

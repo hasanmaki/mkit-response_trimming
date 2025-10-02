@@ -2,27 +2,23 @@ from contextlib import asynccontextmanager
 
 import uvicorn
 from fastapi import FastAPI
-from httpx import AsyncClient, Limits
 from loguru import logger
 
 from deps import HttpClientDep
 from src.api import register_routes
 from src.config import AppSettings, get_settings
 from src.config.cfg_logging import setup_logging
+from src.core.http_manager import build_http_client
 
 setup_logging()
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    """Lifespan handler to setup and teardown resources."""
     settings: AppSettings = get_settings(toml_file_path="config.toml")
     app.state.settings = settings
-    app.state.http_client = AsyncClient(
-        headers=settings.clients.headers,
-        limits=Limits(max_connections=settings.clients.max_connections),
-        timeout=settings.clients.timeout,
-        http2=settings.clients.http2,
-    )
+    app.state.http_client = build_http_client(settings)
     yield
     await app.state.http_client.aclose()
     logger.info("Stopping application...")

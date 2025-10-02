@@ -7,6 +7,7 @@ from httpx import AsyncClient
 
 from src.config.cfg_api_digipos import DigiposConfig
 from src.config.settings import AppSettings
+from src.repos.rep_digipos import DigiposRepository
 from src.services.digipos.srv_digipos import DigiposService
 
 
@@ -33,6 +34,18 @@ def get_digipos_config(request: Request) -> DigiposConfig:
 
 
 DigiposConfigDep = Annotated[DigiposConfig, Depends(get_digipos_config)]
+
+
+# digipos repo
+def get_digipos_repository(
+    client: Annotated[AsyncClient, Depends(get_http_client)],
+    config: Annotated[DigiposConfig, Depends(get_digipos_config)],
+) -> DigiposRepository:
+    """Inisialisasi DigiposRepository (layer: repository) dengan dependency explicit."""
+    return DigiposRepository(client, config)
+
+
+DigiposRepoDep = Annotated[DigiposRepository, Depends(get_digipos_repository)]
 
 
 def get_digipos_service(
