@@ -1,7 +1,9 @@
 from urllib.parse import urljoin
 
 from httpx import AsyncClient
-from src.config.cfg_api_digipos import DigiposConfig
+from loguru import logger
+from src.config.cfg_api_digipos import DigiposConfig, DigiposEndpoints
+from src.core.http_manager import cst_get
 
 
 class DigiposService:
@@ -13,7 +15,7 @@ class DigiposService:
 
         # Simpan komponen yang dibutuhkan
         self._base_url = config.api.base_url
-        self._endpoints = config.endpoints  # DigiposEndpoints
+        self._endpoints: DigiposEndpoints = config.endpoints  # DigiposEndpoints
         self._timeout = config.api.timeout
         self._username = config.api.username
         self._pin = config.api.pin
@@ -21,10 +23,6 @@ class DigiposService:
 
     def _build_url(self, endpoint: str) -> str:
         """Buat URL lengkap untuk endpoint tertentu."""
-        # Jika endpoint_path dari config sudah pasti string (bukan None),
-        # Anda bisa langsung mendapatkan path dari attribute (seperti yang Anda lakukan di login/balance)
-
-        # urljoin sudah menangani slashes dengan baik
         return urljoin(self._base_url, endpoint)
 
     async def get_balance(self) -> dict:
@@ -32,9 +30,12 @@ class DigiposService:
         if self._endpoints.balance is None:
             raise ValueError("Balance endpoint is not configured (None)")
         url = self._build_url(self._endpoints.balance)
+        logger.debug(f"Fetching balance from URL: {url}")
         payload = {
             "username": self._username,
         }
-        response = await self.client.get(url, params=payload, timeout=self._timeout)
-        response.raise_for_status()
+        logger.debug(f" sending request full url {url} with payload {payload}")
+        response = await cst_get(
+            self.client, url, params=payload, timeout=self._timeout
+        )
         return response.json()

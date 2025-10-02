@@ -27,9 +27,9 @@ HttpClientDep = Annotated[AsyncClient, Depends(get_http_client)]
 
 
 # digipos specific
-def get_digipos_config(settings: AppSettings) -> DigiposConfig:
-    """Ambil DigiposConfig dari AppSettings (AppSettings diambil dari app.state via dependency chain)."""
-    return settings.digipos
+def get_digipos_config(request: Request) -> DigiposConfig:
+    """Ambil DigiposConfig langsung dari app.state."""
+    return request.app.state.settings.digipos
 
 
 DigiposConfigDep = Annotated[DigiposConfig, Depends(get_digipos_config)]

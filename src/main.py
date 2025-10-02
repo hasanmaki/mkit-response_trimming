@@ -5,6 +5,7 @@ from fastapi import FastAPI
 from httpx import AsyncClient, Limits
 from loguru import logger
 
+from deps import HttpClientDep
 from src.api import register_routes
 from src.config import AppSettings, get_settings
 from src.config.cfg_logging import setup_logging
@@ -33,6 +34,16 @@ app = FastAPI(lifespan=lifespan)
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
+
+
+# testing async client
+@app.get("/test-client")
+async def test_client(
+    client: HttpClientDep,
+):
+    response = await client.get("https://httpbin.org/get")
+    response.raise_for_status()
+    return response.json()
 
 
 register_routes(app)
