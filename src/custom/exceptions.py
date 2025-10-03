@@ -48,3 +48,10 @@ class HTTPConnectionError(AppExceptionError):
 
     default_message: str = "Service unavailable: Failed to connect to external service."
     status_code: int = 503
+
+
+class HTTPGenricError(AppExceptionError):
+    """Generic HTTP exception."""
+
+    default_message: str = "An unexpected HTTP error occurred."
+    status_code: int = 500

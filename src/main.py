@@ -9,7 +9,8 @@ from core.http_utils import build_http_client
 from src.api import register_routes
 from src.config import AppSettings, get_settings
 from src.config.cfg_logging import setup_logging
-from src.custom.exceptions import AppExceptionError
+from src.custom.exceptions import AppExceptionError, HTTPGenricError
+from src.custom.middlewares import LoggingMiddleware
 from src.deps import HttpClientDep
 
 setup_logging()
@@ -27,6 +28,10 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(lifespan=lifespan)
+
+
+# middlewares
+app.add_middleware(LoggingMiddleware)
 
 
 # exceptions
@@ -71,9 +76,12 @@ async def root():
 async def test_client(
     client: HttpClientDep,
 ):
-    response = await client.get("https://httpbin.org/get")
-    response.raise_for_status()
-    return response.json()
+    try:
+        response = await client.get("http://test.com")
+        response.raise_for_status()
+        return response.json()
+    except Exception as e:
+        raise HTTPGenricError(cause=e)
 
 
 @app.get("/test-request")
