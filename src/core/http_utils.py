@@ -2,24 +2,7 @@ import httpx
 from loguru import logger
 
 from src.config import AppSettings
-
-
-class HttpResponseError(Exception):
-    """Custom exception untuk error response dari HTTP request."""
-
-    def __init__(self, message: str, context: dict = None, cause: Exception = None):
-        super().__init__(message)
-        self.context = context or {}
-        self.cause = cause
-
-
-class HTTPConnectionError(Exception):
-    """Custom exception untuk error koneksi HTTP."""
-
-    def __init__(self, message: str, context: dict = None, cause: Exception = None):
-        super().__init__(message)
-        self.context = context or {}
-        self.cause = cause
+from src.custom.exceptions import HTTPConnectionError, HttpResponseError
 
 
 def build_http_client(settings: AppSettings) -> httpx.AsyncClient:

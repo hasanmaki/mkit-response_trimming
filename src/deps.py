@@ -5,7 +5,7 @@ from typing import Annotated
 from fastapi import Depends, Request
 from httpx import AsyncClient
 
-from domain.digipos.rep_account import DigiposRepos
+from domain.digipos.dg_repos import DigiposRepos
 from domain.digipos.sch_config import DigiposConfig
 from src.config.settings import AppSettings
 
