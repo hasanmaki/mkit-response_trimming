@@ -1,6 +1,10 @@
 # exceptions.py
 from typing import Any
 
+from fastapi import Request
+from fastapi.responses import JSONResponse, PlainTextResponse
+from loguru import logger
+
 
 class AppExceptionError(Exception):
     """Base exception for all clients."""
@@ -36,6 +40,37 @@ class AppExceptionError(Exception):
         return data
 
 
+# register
+async def global_exception_handler(request: Request, exc: AppExceptionError):  # noqa: RUF029
+    """Dynamic response handler for AppExceptionError.
+
+    - Default: JSON
+    - Plain text: if header X-Response-Format=text or query param format=text
+    """
+    log_context = {
+        "path": str(request.url.path),
+        "method": request.method,
+        "client": request.client.host if request.client else None,
+        "status_code": exc.status_code,
+        "context": exc.context,
+        "cause": str(exc.__cause__) if exc.__cause__ else None,
+    }
+    logger.bind(**log_context).error(exc.message)
+    response_format = request.headers.get(
+        "X-Response-Format"
+    ) or request.query_params.get("format", "json")
+
+    if response_format.lower() == "text":
+        text = f"[{exc.__class__.__name__}] {exc.message}"
+        if exc.context:
+            text += f" | context={exc.context}"
+        if exc.__cause__:
+            text += f" | cause={exc.__cause__}"
+        return PlainTextResponse(text, status_code=exc.status_code)
+
+    return JSONResponse(content=exc.to_dict(), status_code=exc.status_code)
+
+
 class HttpResponseError(AppExceptionError):
     """Exception raised for HTTP response errors."""
 
@@ -43,6 +78,7 @@ class HttpResponseError(AppExceptionError):
     status_code: int = 502
 
 
+# buat custom exception seterus nya ke bawah
 class HTTPConnectionError(AppExceptionError):
     """Exception raised for HTTP connection errors."""
 

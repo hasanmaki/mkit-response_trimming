@@ -25,4 +25,4 @@ extra:
 activation:
   # set to false to disable logging for specific modules
   - ["my_module.secret", false]
-  - ["another_library.module", true]
+  - ["httpcore", true]

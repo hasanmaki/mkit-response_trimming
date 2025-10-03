@@ -19,7 +19,7 @@ class LoggingMiddleware(BaseHTTPMiddleware):
             method=request.method,
             client=request.client.host if request.client else "unknown",
             query_params=dict(request.query_params),
-            headers=dict(request.headers),
+            # headers=dict(request.headers),
         ).info("Incoming request")
 
         response = await call_next(request)
